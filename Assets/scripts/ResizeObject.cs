@@ -4,45 +4,53 @@ using UnityEngine;
 
 public class ResizeObject : MonoBehaviour
 {
-    private Vector3[] sizes; // Массив из трех возможных размеров объекта
+
     private int currentSizeIndex = 0; // Индекс текущего размера
-    private Vector3 originalSize; // Изначальный размер объекта
+    [SerializeField]
+    private int initSizeStageInd;//начальное состояние размера
+
+    private Vector3 smallestSize; // Наименьший размер объекта
+    [SerializeField]
+    private float[] sizes; // Массив коэффициентов из возможных размеров объекта
+
+
+    [SerializeField]
+    private float resizeTime; 
 
     private void Start()
     {
         // Сохраняем изначальный размер объекта
-        originalSize = transform.localScale;// Инициализируем массив размеров, начиная с изначального размера
-        sizes = new Vector3[]
-        {
-            originalSize,
-            new Vector3(2.0f, 2.0f, 2.0f), // Второй размер
-            new Vector3(1.5f, 1.5f, 1.5f), // Третий размер
-        };
+        smallestSize = transform.localScale/sizes[initSizeStageInd];// Инициализируем массив размеров, начиная с изначального размера
+
+        currentSizeIndex= initSizeStageInd;
     }
 
-    private void Update()
+    public void Resize()
     {
-        if (Input.GetMouseButtonDown(2)) // Проверяем нажатие колесика мыши
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+        // Увеличиваем индекс размера (циклически)
+        currentSizeIndex = (currentSizeIndex + 1) % sizes.Length;
+        // Меняем размер объекта
 
-            // Проверяем, пересек ли луч какой-либо объект
-            if (Physics.Raycast(ray, out hit))
-            {
-                // Получаем компонент Transform объекта, на который указывает луч
-                Transform hitTransform = hit.transform;
+        StopAllCoroutines();
+        StartCoroutine("SlightlyyResize");
 
-                // Проверяем, принадлежит ли объект к слою, который вы хотите изменить
-                // размер (при необходимости добавьте или измените слои)
-                if (hitTransform.CompareTag("ResizableObject"))
-                {
-                    // Увеличиваем индекс размера (циклически)
-                    currentSizeIndex = (currentSizeIndex + 1) % sizes.Length;
-                    // Меняем размер объекта
-                    hitTransform.localScale = sizes[currentSizeIndex];
-                }
-            }
-        }
+       //transform.localScale = smallestSize * sizes[currentSizeIndex];
     }
+
+
+    IEnumerator SlightlyyResize()
+    {
+        Vector3 crntLocalScale= transform.localScale;
+        float crntTime = 0f ;
+        while (crntTime< resizeTime)
+        {
+            transform.localScale = Vector3.Lerp(crntLocalScale, smallestSize * sizes[currentSizeIndex],crntTime/resizeTime);
+            crntTime += Time.deltaTime;
+            yield return null;
+        }
+
+
+        yield return null;
+    }
+
 }
