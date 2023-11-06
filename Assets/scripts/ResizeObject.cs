@@ -13,44 +13,92 @@ public class ResizeObject : MonoBehaviour
     [SerializeField]
     private float[] sizes; // Массив коэффициентов из возможных размеров объекта
 
+    [SerializeField]
+    private float[] weights;
+
 
     [SerializeField]
-    private float resizeTime; 
+    private float resizeTime;
+
+    public bool changeWeight;
+
+    private Rigidbody rb;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
     private void Start()
     {
         // Сохраняем изначальный размер объекта
-        smallestSize = transform.localScale/sizes[initSizeStageInd];// Инициализируем массив размеров, начиная с изначального размера
+        smallestSize = transform.localScale / sizes[initSizeStageInd];// Инициализируем массив размеров, начиная с изначального размера
 
-        currentSizeIndex= initSizeStageInd;
+        currentSizeIndex = initSizeStageInd;
+
+        for (int i = 0; i < sizes.Length; i++)
+        {
+            if (sizes[i] == 0)
+            {
+                sizes[i] = 1;
+            }
+        }
+
+        if (changeWeight)
+        {
+            for (int i = 0; i < weights.Length; i++)
+            {
+                if (weights[i] == 0)
+                {
+                    weights[i] = 1;
+                }
+            }
+            rb.mass = weights[currentSizeIndex];
+        }
+
+        if(resizeTime==0)
+        {
+            resizeTime = 0.05f;
+        }
+
     }
 
     public void Resize()
     {
         // Увеличиваем индекс размера (циклически)
         currentSizeIndex = (currentSizeIndex + 1) % sizes.Length;
-        // Меняем размер объекта
 
+        if (changeWeight)
+        {
+            //меняем вес
+            rb.mass = weights[currentSizeIndex];
+        }
+        // Меняем размер объекта
         StopAllCoroutines();
         StartCoroutine("SlightlyyResize");
 
-       //transform.localScale = smallestSize * sizes[currentSizeIndex];
+        //transform.localScale = smallestSize * sizes[currentSizeIndex];
     }
 
 
     IEnumerator SlightlyyResize()
     {
-        Vector3 crntLocalScale= transform.localScale;
-        float crntTime = 0f ;
-        while (crntTime< resizeTime)
+        Vector3 crntLocalScale = transform.localScale;
+        float crntTime = 0f;
+        while (crntTime < resizeTime)
         {
-            transform.localScale = Vector3.Lerp(crntLocalScale, smallestSize * sizes[currentSizeIndex],crntTime/resizeTime);
+            transform.localScale = Vector3.Lerp(crntLocalScale, smallestSize * sizes[currentSizeIndex], crntTime / resizeTime);
             crntTime += Time.deltaTime;
             yield return null;
         }
 
 
         yield return null;
+    }
+
+    public float GetWeight()
+    {
+        return rb.mass;
     }
 
 }

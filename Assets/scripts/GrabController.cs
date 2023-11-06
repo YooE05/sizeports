@@ -19,11 +19,11 @@ public class GrabController : MonoBehaviour
 
         //луч засекающий предметы, которые можно перетаскивать
         RaycastHit dragableHit;
-        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out dragableHit, 50f, LayerMask.GetMask("dragable"));
+        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out dragableHit, 50f, LayerMask.GetMask("dragable") | LayerMask.GetMask("dragAnSize"));
 
         //луч засекающий поверхности, на которые можно ставить предметы
         RaycastHit groundHit;
-        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out groundHit, 50f, LayerMask.GetMask("ground"));
+        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out groundHit, 50f);
 
         //проверка щелчка лкм
         if (Input.GetMouseButtonDown(0))
@@ -34,12 +34,12 @@ public class GrabController : MonoBehaviour
                 //и мышь на перетаскиваемом предмете, то захватываем его
                 if (dragableHit.collider)
                 {
-             
+
                     dragableHit.rigidbody.isKinematic = true;
                     selectedObj = dragableHit.collider.gameObject;
                     selectedObj.transform.rotation = Quaternion.Euler(0, 0, 0); //позже заменить на начальный вектор поворота объекта, т.к. он может быть ненулевым
 
-                    marker.gameObject.SetActive(true);   
+                    marker.gameObject.SetActive(true);
                     delta = selectedObj.transform.position - groundHit.point;
                 }
 
@@ -56,10 +56,10 @@ public class GrabController : MonoBehaviour
         //если захвачен предмет, перемещаем его относительно точки падения луча на поверхность
         if (selectedObj)
         {
-            selectedObj.transform.position = new Vector3(groundHit.point.x+ delta.x, groundHit.point.y + offsetByGround, groundHit.point.z+ delta.z);
+            selectedObj.transform.position = new Vector3(groundHit.point.x + delta.x, groundHit.point.y + offsetByGround+ selectedObj.transform.localScale.y/2f, groundHit.point.z + delta.z);
 
             RaycastHit hit;
-            Physics.Raycast(selectedObj.transform.position, Vector3.down,out hit, 50f);
+            Physics.Raycast(selectedObj.transform.position, Vector3.down, out hit, 50f);
 
             marker.position = new Vector3(hit.point.x, hit.point.y, hit.point.z);
         }
