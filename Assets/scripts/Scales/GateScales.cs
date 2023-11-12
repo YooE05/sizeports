@@ -9,6 +9,8 @@ public class GateScales : WeightScale
 
     private Vector3 startPos;
     private Vector3 nextPos;
+    [SerializeField]
+    private Vector3 axesAble;
 
     [SerializeField]
     private float liftMultiplier=1f;
@@ -16,13 +18,14 @@ public class GateScales : WeightScale
     private void Start()
     {
         startPos = gates.localPosition;
+        axesAble.Normalize();
     }
 
     protected override void UpdateWeight()
     {
         base.UpdateWeight();
 
-        nextPos = new Vector3(startPos.x, startPos.y + calculatedMass* liftMultiplier, startPos.z);
+        nextPos = new Vector3(startPos.x + calculatedMass * liftMultiplier * axesAble.x, startPos.y + calculatedMass* liftMultiplier* axesAble.y, startPos.z + calculatedMass * liftMultiplier * axesAble.z);
         StopAllCoroutines();
         StartCoroutine("Translate");
     }
