@@ -7,7 +7,9 @@ public class ResizeObject : MonoBehaviour
 
     private int currentSizeIndex = 0; // Индекс текущего размера
     [SerializeField]
-    private int initSizeStageInd;//начальное состояние размера
+    private int sceneSizeStageInd;//начальное состояние размера на сцене
+    [SerializeField]
+    private int startSizeStageInd;//состояние на начало игры
 
     private Vector3 smallestSize; // Наименьший размер объекта
     [SerializeField]
@@ -32,9 +34,10 @@ public class ResizeObject : MonoBehaviour
     private void Start()
     {
         // Сохраняем изначальный размер объекта
-        smallestSize = transform.localScale / sizes[initSizeStageInd];// Инициализируем массив размеров, начиная с изначального размера
+        smallestSize = transform.localScale / sizes[sceneSizeStageInd];// Инициализируем массив размеров, начиная с изначального размера
+        currentSizeIndex = sceneSizeStageInd;      
+        transform.localScale = smallestSize * sizes[startSizeStageInd];
 
-        currentSizeIndex = initSizeStageInd;
 
         for (int i = 0; i < sizes.Length; i++)
         {
@@ -56,10 +59,12 @@ public class ResizeObject : MonoBehaviour
             rb.mass = weights[currentSizeIndex];
         }
 
-        if(resizeTime==0)
+        if (resizeTime == 0)
         {
             resizeTime = 0.05f;
         }
+
+
 
     }
 
