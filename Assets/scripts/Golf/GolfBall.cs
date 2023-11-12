@@ -10,7 +10,7 @@ public class GolfBall : MonoBehaviour
         {
             if (collision.gameObject.GetComponent<GolfHole>().isActive)
             {
-                collision.gameObject.GetComponent<GolfHole>().isActive = false;
+                collision.gameObject.GetComponent<GolfHole>().RiseFlag();
                 GolfMinigameController.ballRolledAtHole?.Invoke();
             }
 
