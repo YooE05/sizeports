@@ -35,7 +35,7 @@ public class ResizeObject : MonoBehaviour
     {
         // Сохраняем изначальный размер объекта
         smallestSize = transform.localScale / sizes[sceneSizeStageInd];// Инициализируем массив размеров, начиная с изначального размера
-        currentSizeIndex = sceneSizeStageInd;      
+        currentSizeIndex = startSizeStageInd;      
         transform.localScale = smallestSize * sizes[startSizeStageInd];
 
 
