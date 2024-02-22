@@ -18,13 +18,20 @@ public class ThrowController : MonoBehaviour
     [SerializeField]
     private Vector3[] throwDirections;
 
-
     [SerializeField]
     private MeshRenderer[] lightsMeshRen;
     [SerializeField]
     private Material enableMat;
     [SerializeField]
     private Material disableMat;
+
+    public AudioSource audioSource;
+    [SerializeField]
+    private GameObject[] tutorialObjs;
+    public GameObject winner;
+    [SerializeField]
+    private AudioSource winAudio;
+
 
     private int points;
 
@@ -86,6 +93,9 @@ public class ThrowController : MonoBehaviour
 
             //удар + задержка
             balls[i].AddForce(throwDirections[i] * throwForce[i], ForceMode.Impulse);
+
+            audioSource.Play();
+
             yield return new WaitForSeconds(4f);
         }
 
@@ -98,7 +108,13 @@ public class ThrowController : MonoBehaviour
         }
         else
         {
+            winAudio.Play();
             Debug.Log("Игра завершена");
+            foreach (var item in tutorialObjs)
+            {
+                item.SetActive(false);
+            }
+            winner.SetActive(true);
         }
 
     }

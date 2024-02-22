@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GrabController : MonoBehaviour
@@ -8,6 +6,7 @@ public class GrabController : MonoBehaviour
 
     [SerializeField]
     private float offsetByGround;
+    public AudioSource audioSource;
 
     [SerializeField]
     private Transform marker;
@@ -38,7 +37,7 @@ public class GrabController : MonoBehaviour
                     dragableHit.rigidbody.isKinematic = true;
                     selectedObj = dragableHit.collider.gameObject;
                     selectedObj.transform.rotation = Quaternion.Euler(0, 0, 0); //позже заменить на начальный вектор поворота объекта, т.к. он может быть ненулевым
-
+                    audioSource.Play();
                     marker.gameObject.SetActive(true);
                     delta = selectedObj.transform.position - groundHit.point;
                 }
@@ -49,6 +48,7 @@ public class GrabController : MonoBehaviour
             {
                 selectedObj.GetComponent<Rigidbody>().isKinematic = false;
                 marker.gameObject.SetActive(false);
+                audioSource.Play();
                 selectedObj = null;
             }
         }

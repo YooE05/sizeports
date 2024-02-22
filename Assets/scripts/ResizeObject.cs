@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ResizeObject : MonoBehaviour
@@ -26,6 +25,8 @@ public class ResizeObject : MonoBehaviour
 
     private Rigidbody rb;
 
+    public AudioSource audioSource;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -35,7 +36,7 @@ public class ResizeObject : MonoBehaviour
     {
         // Сохраняем изначальный размер объекта
         smallestSize = transform.localScale / sizes[sceneSizeStageInd];// Инициализируем массив размеров, начиная с изначального размера
-        currentSizeIndex = startSizeStageInd;      
+        currentSizeIndex = startSizeStageInd;
         transform.localScale = smallestSize * sizes[startSizeStageInd];
 
 
@@ -81,7 +82,7 @@ public class ResizeObject : MonoBehaviour
         // Меняем размер объекта
         StopAllCoroutines();
         StartCoroutine("SlightlyyResize");
-
+        audioSource.Play();
         //transform.localScale = smallestSize * sizes[currentSizeIndex];
     }
 

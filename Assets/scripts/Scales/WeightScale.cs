@@ -15,6 +15,9 @@ public class WeightScale : MonoBehaviour
     private float currentDeltaTime;
     private float lastDeltaTime;
 
+    [SerializeField]
+    private AudioSource newItemOnScalesSound;
+
     private void Awake()
     {
         forceToMass = 1f / Physics.gravity.magnitude;
@@ -43,6 +46,7 @@ public class WeightScale : MonoBehaviour
     {
         if (collision.rigidbody != null)
         {
+
             if (impulsePerRigidBody.ContainsKey(collision.rigidbody))
                 impulsePerRigidBody[collision.rigidbody] = Mathf.Abs(collision.impulse.y / lastDeltaTime);
             else
@@ -51,10 +55,16 @@ public class WeightScale : MonoBehaviour
             UpdateWeight();
         }
     }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.rigidbody != null)
         {
+            if (impulsePerRigidBody.Count == 0)
+            {
+                newItemOnScalesSound.Play();
+            }
+
             if (impulsePerRigidBody.ContainsKey(collision.rigidbody))
                 impulsePerRigidBody[collision.rigidbody] = Mathf.Abs(collision.impulse.y / lastDeltaTime);
             else
@@ -63,6 +73,7 @@ public class WeightScale : MonoBehaviour
             UpdateWeight();
         }
     }
+
     private void OnCollisionExit(Collision collision)
     {
         if (collision.rigidbody != null)
